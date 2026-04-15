@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Kiara Optom Tools</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+<meta charset="UTF-8" />
+<title>Kiara Optom Tools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <style>
 body{
@@ -12,7 +11,7 @@ body{
   padding:0;
   font-family: Arial, sans-serif;
   background:#d1d1d1;
-  font-size:14px;
+  font-size:12px;
 }
 
 /* Container */
@@ -25,77 +24,103 @@ body{
 /* Title */
 h1{
   text-align:center;
-  font-size:26px;
+  font-size:20px;
   font-weight:300;
-  margin-bottom:30px;
+  margin-bottom:25px;
   color:#2b2b2b;
+}
+
+/* Grid */
+.button-grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:12px;
 }
 
 /* Buttons */
 a.button{
-  display:block;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
   text-decoration:none;
   background:#f1f1f1;
   border:1px solid #2b2b2b;
   color:#2b2b2b;
-  padding:22px;
-  margin-bottom:14px;
-  text-align:center;
-  font-size:16px;
-  font-weight:300;
-  border-radius:15px;
 
+  padding:10px;
+  text-align:center;
+  font-size:10px;
+  border-radius:12px;
+  height:120px;
+  margin-top:30px;
 }
 
+/* Image */
+a.button img{
+  width:100px;
+  height:100px;
+  object-fit:contain; /* keeps full image, no crop */
+}
 </style>
 </head>
 
 <body>
-  <div class="container">
-    <div style="height:100px"></div>
-    <h1>Kiara Optometry Tools</h1>
+
+<div class="container">
+  <div style="height:80px"></div>
+  <h1>Kiara Optometry Tools</h1>
+
+  <div class="button-grid">
 
     <a class="button" href="https://sp-rx.github.io/CL-SELECTOR/" target="_blank">
-      Contact Lens Selector.
+      <img src="img/cl.png">
+      Contact Lens Selector
     </a>
 
     <a class="button" href="https://sp-rx.github.io/rod/" target="_blank">
-      Rodenstock Lens Selector.
+      <img src="img/rod.png">
+      Rodenstock Lens Selector
     </a>
     
     <a class="button" href="https://sp-rx.github.io/OL-selector/" target="_blank">
-      Ophthalmic Lens Selector.
+      <img src="img/ol.png">
+      Ophthalmic Lens Selector
     </a>
 
-<br><br>
-
-    <a class="button" style="background-color:lightblue" href="https://sp-rx.github.io/super_rx/" target="_blank">
-      SP-RX Eye Exam.
+    <a class="button" href="https://sp-rx.github.io/super_rx/" target="_blank">
+      <img src="img/exam.png">
+      SP-RX Eye Exam
     </a>
 
     <a class="button" href="https://sp-rx.github.io/mobile_FCDC/" target="_blank">
-      Next Vision Add Calculator.
+      <img src="img/add.png">
+      Add Calculator
     </a>
 
     <a class="button" href="https://sp-rx.github.io/acuvue_astig_rotator/" target="_blank">
-      Acuvue Astig Rotator.
+      <img src="img/astig.png">
+      Astig Rotator
     </a>
 
-<br><br>
-
-    
     <a class="button" href="https://sp-rx.github.io/trainer_light/" target="_blank">
-      Spherical and Astigmatism Visualizer.
+      <img src="img/visual.png">
+      Visualizer
     </a>
 
-        <a class="button" href="https://sp-rx.github.io/shop_sop/" target="_blank">
-      Shop SOP Training.
+    <a class="button" href="https://sp-rx.github.io/shop_sop/" target="_blank">
+      <img src="img/sop.png">
+      Shop SOP
     </a>
 
     <a class="button" href="https://sp-rx.github.io/Trainer/" target="_blank">
-      Subjective RX Trainer.
+      <img src="img/trainer.png">
+      RX Trainer
     </a>
+
   </div>
+</div>
 
 <div style="height:100px"></div>
 
