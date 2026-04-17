@@ -1,132 +1,502 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Kiara Optom Tools</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retinoscopy</title>
 <style>
-body{
-  margin:0;
-  padding:0;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
   font-family: Arial, sans-serif;
-  background:#d1d1d1;
-  font-size:12px;
+  background: #f4f4f2;
+  color: #1a1a1a;
+  padding: 24px 16px;
+  min-height: 100vh;
+}
+.wrapper {
+  max-width: 650px;
+  margin: 0 auto;
+}
+h2 { font-size: 25px; font-weight: 700; margin-bottom: 20px; color:#888 }
+.eye-card {
+  background: #ffffff;
+  border: 0.5px solid rgba(0,0,0,0.15);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  max-width: 750px;
+}
+.eye-label {
+  font-size: 20px;
+  font-weight: 600;
+  color: #888;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.meridian-row {
+  display: flex;
+  gap: 45px;
+  margin-bottom: 16px;
+}
+.meridian-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.line-canvas { width: 104px; height: 104px; display: flex; align-items: center; justify-content: center; }
+.line-svg { width: 104px; height: 104px;}
+.col-label { font-size: 11px; color: #999; }
+.inputs-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 30px 1fr 1fr;
+  gap: 15px;
+  margin-bottom:10px;
+}
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 11px; color: #888; text-align: center; }
+.stepper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 45px;
+}
+.stepper2 {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 40px;
+}
+.stepper.readonly-stepper {
+  background: #f9f9f9;
+  border-color: #eee;
+  justify-content: center;
 }
 
-/* Container */
-.container{
-  width:90%;
-  max-width:580px;
-  margin:20px auto 40px auto;
+.stepper-btn {
+  width: 25%;
+  height: 100%;
+  background: #f4f4f2;
+  border: none;
+  font-size: 15px;
+  line-height: 1;
+  color: #444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  flex-shrink: 0;
+}
+.stepper-btn:active { background: #ddd; }
+.stepper-val {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1a1a;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.stepper-val.pos { color: #1a7a45; }
+.stepper-val.neg { color: #c0392b; }
+.result-box {
+  background: #f4f4f2;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1a1a1a;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.result-box.empty { color: #bbb; font-weight: 400; font-size: 13px; }
+.pos { color: #1a7a45; }
+.neg { color: #c0392b; }
+.wd-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 560px;
+  padding: 8px 0;
+}
+.wd-row label { font-size: 13px; color: #666; margin-left:4% }
+.wd-stepper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 46px;
+  background-color:white;
+}
+.wd-stepper .stepper-btn { width: 46px; min-width: 46px; }
+.wd-stepper .stepper-val { min-width: 72px; font-size: 14px; background-color:white; }
+
+@media (prefers-color-scheme: dark) {
+  body { background: #1c1c1c; color: #e8e8e8; }
+  .eye-card { background: #2a2a2a; border-color: rgba(255,255,255,0.1); }
+  .stepper { border-color: #444; }
+  .stepper.readonly-stepper { background: #222; border-color: #333; }
+  .stepper-btn { background: #333; color: #ccc; }
+  .stepper-btn:active { background: #444; }
+  .stepper-val { color: #e8e8e8; }
+  .result-box { background: #333; color: #e8e8e8; }
+  .result-box.empty { color: #666; }
+  .wd-stepper { border-color: #444; }
+  .pos { color: #4caf7d; }
+  .neg { color: #e57373; }
 }
 
-/* Title */
-h1{
-  text-align:center;
-  font-size:20px;
-  font-weight:300;
-  margin-bottom:25px;
-  color:#2b2b2b;
-}
-
-/* Grid */
-.button-grid{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:12px;
-}
-
-/* Buttons */
-a.button{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-
-  text-decoration:none;
-  background:#f1f1f1;
-  border:1px solid #2b2b2b;
-  color:#2b2b2b;
-
-  padding:10px;
-  text-align:center;
-  font-size:12px;
-  border-radius:12px;
-  width: auto;
-  height:auto;
-  margin-top:30px;
-}
-
-/* Image */
-a.button img{
-  width:130px;
-  height:130px;
-  object-fit:contain; /* keeps full image, no crop */
-  margin-bottom:20px;
-  border-radius:10px;
-}
 </style>
 </head>
-
 <body>
-<div class="container">
-  <div style="height:80px"></div>
-  <h1>Kiara Optometry Tools</h1>
 
-  <div class="button-grid">
+<div class="wrapper">
+<h2>Retinoscopy</h2>
+<!-- Working Distance -->
+<div class="eye-card">
+<div class="wd-row">
+  <span style="color:#888">Working distance (cm)</span>
 
-    <a class="button" href="https://sp-rx.github.io/CL-SELECTOR/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/1.jpg">
-      Contact Lens Selector
-    </a>
+<span style="color:#888" id="wd_cm"></span>
 
-    <a class="button" href="https://sp-rx.github.io/ret_helper/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/2.jpg">
-Retinoscopy Helper    </a>
-
-    <a style="display:none" class="button" href="https://sp-rx.github.io/rod/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/2.jpg">
-Retinoscopy Calculator    </a>
-    
-    <a class="button" href="https://sp-rx.github.io/OL-selector/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/3.jpg">
-      Ophthalmic Lens Selector
-    </a>
-    
-    <a class="button" href="https://sp-rx.github.io/mobile_FCDC/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/5.jpg">
-      Add Calculator
-    </a>
-    
-    <a class="button" href="https://sp-rx.github.io/super_rx/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/4.jpg">
-      SP-RX Eye Exam
-    </a>
-
-    <a class="button" href="https://sp-rx.github.io/acuvue_astig_rotator/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/6.jpg">
-      Astig Rotator
-    </a>
-
-    <a class="button" href="https://sp-rx.github.io/trainer_light/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/7.jpg">
-      Visualizer
-    </a>
-
-    <a class="button" href="https://sp-rx.github.io/shop_sop/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/8.jpg">
-      Shop SOP
-    </a>
-
-    <a class="button" href="https://sp-rx.github.io/Trainer/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/9.jpg">
-      RX Trainer
-    </a>
+  <div class="wd-stepper">
+    <button style="color:red" class="stepper-btn" data-key="wd" data-step="-0.25">−</button>
+    <span class="stepper-val" id="wd_disp">2.00</span>
+    <button style="color:green" class="stepper-btn" data-key="wd" data-step="0.25">+</button>
 
   </div>
+
+</div>
+</div>
+
+
+
+
+
+<!-- OD -->
+<div class="eye-card">
+  <div class="eye-label">Right Eye</div>
+
+  <div class="meridian-row">
+
+
+    <div class="meridian-col">
+      <div class="line-canvas">
+
+       <svg class="line-svg" id="svg-od-2" viewBox="0 0 64 64" fill="none">
+<circle cx="32" cy="32" r="22" fill="rgba(59, 36, 23, 0.6)"/>
+<circle cx="32" cy="32" r="12" fill="#000"/>
+
+          <line x1="32" y1="4" x2="32" y2="60" stroke="#f5a623" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+
+
+
+
+      </div>
+      <span class="col-label">Streak Direction</span>
+    </div>
+
+
+
+    <div class="meridian-col">
+      <div class="line-canvas">
+        <svg class="line-svg" id="svg-od-1" viewBox="0 0 64 64" fill="none">
+<circle cx="32" cy="32" r="22" fill="rgba(59, 36, 23, 0.6)"/>
+<circle cx="32" cy="32" r="12" fill="#000"/>
+          <line x1="32" y1="4" x2="32" y2="60" stroke="#f5a623" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="col-label">Streak Direction</span>
+    </div>
+  </div>
+
+
+  <div class="inputs-row">
+
+<div class="field">
+  <label>Sphere 1</label>
+  <div class="stepper">
+    <span class="stepper-val" id="od_s2_disp">0.00</span>
+  </div>
+
+  <div class="stepper2">
+    <button style="color:red" class="stepper-btn" data-key="od_s2" data-step="-1.00">--</button>
+    <button style="color:green" class="stepper-btn" data-key="od_s2" data-step="1.00">++</button>
+    <button style="color:red" class="stepper-btn" data-key="od_s2" data-step="-0.25">-</button>
+    <button style="color:green" class="stepper-btn" data-key="od_s2" data-step="0.25">+</button>
+  </div>
+</div>
+
+<div class="field">
+  <label>Axis 1</label>
+  <div class="stepper">
+    <span class="stepper-val" id="od_a1_disp">0</span>
+  </div>
+
+  <div class="stepper2">
+    <button style="color:red" class="stepper-btn" data-key="od_a1" data-step="-30">--</button>
+    <button style="color:green" class="stepper-btn" data-key="od_a1" data-step="30">++</button>
+    <button style="color:red" class="stepper-btn" data-key="od_a1" data-step="-5">-</button>
+    <button style="color:green" class="stepper-btn" data-key="od_a1" data-step="5">+</button>
+  </div>
+</div>
+
+<div></div> <!-- spacer -->
+
+<div class="field">
+  <label>Sphere 2</label>
+  <div class="stepper">
+    <span class="stepper-val" id="od_s1_disp">0.00</span>
+  </div>
+
+  <div class="stepper2">
+    <button style="color:red" class="stepper-btn" data-key="od_s1" data-step="-1.00">--</button>
+    <button style="color:green" class="stepper-btn" data-key="od_s1" data-step="1.00">++</button>
+    <button style="color:red" class="stepper-btn" data-key="od_s1" data-step="-0.25">-</button>
+    <button style="color:green" class="stepper-btn" data-key="od_s1" data-step="0.25">+</button>
+  </div>
+</div>
+
+<div class="field">
+  <label>Axis 2</label>
+  <div class="stepper">
+    <span class="stepper-val" id="od_a2_disp">90</span>
+  </div>
+
+  <div class="stepper2">
+    <button style="color:red" class="stepper-btn" data-key="od_a2" data-step="-30">--</button>
+    <button style="color:green" class="stepper-btn" data-key="od_a2" data-step="30">++</button>
+    <button style="color:red" class="stepper-btn" data-key="od_a2" data-step="-5">-</button>
+    <button style="color:green" class="stepper-btn" data-key="od_a2" data-step="5">+</button>
+  </div>
+</div>
+
+</div>
+
+  <div class="result-box empty" id="od_out">Adjust values above</div>
+</div>
+
+<!-- OS -->
+<div class="eye-card">
+  <div class="eye-label">Left Eye</div>
+  <div class="meridian-row">
+    <div class="meridian-col">
+      <div class="line-canvas">
+        <svg class="line-svg" id="svg-os-2" viewBox="0 0 64 64" fill="none">
+<circle cx="32" cy="32" r="22" fill="rgba(59, 36, 23, 0.6)"/>
+<circle cx="32" cy="32" r="12" fill="#000"/>
+          <line x1="32" y1="4" x2="32" y2="60" stroke="#f5a623" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="col-label">Streak Direction</span>
+    </div>
+    <div class="meridian-col">
+      <div class="line-canvas">
+        <svg class="line-svg" id="svg-os-1" viewBox="0 0 64 64" fill="none">
+<circle cx="32" cy="32" r="22" fill="rgba(59, 36, 23, 0.6)"/>
+<circle cx="32" cy="32" r="12" fill="#000"/>
+          <line x1="32" y1="4" x2="32" y2="60" stroke="#f5a623" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="col-label">Streak Direction</span>
+    </div>
+  </div>
+  <div class="inputs-row">
+<div class="field">
+  <label>Sphere 1</label>
+  <div class="stepper">
+    <span class="stepper-val" id="os_s2_disp">0.00</span>
+  </div>
+
+  <div class="stepper2">
+    <button style="color:red" class="stepper-btn" data-key="os_s2" data-step="-1.00">--</button>
+    <button style="color:green" class="stepper-btn" data-key="os_s2" data-step="1.00">++</button>
+    <button style="color:red" class="stepper-btn" data-key="os_s2" data-step="-0.25">-</button>
+    <button style="color:green" class="stepper-btn" data-key="os_s2" data-step="0.25">+</button>
+  </div>
+</div>
+
+<div class="field">
+  <label>Axis 1</label>
+  <div class="stepper">
+    <span class="stepper-val" id="os_a1_disp">0</span>
+  </div>
+
+  <div class="stepper2">
+    <button style="color:red" class="stepper-btn" data-key="os_a1" data-step="-30">--</button>
+    <button style="color:green" class="stepper-btn" data-key="os_a1" data-step="30">++</button>
+    <button style="color:red" class="stepper-btn" data-key="os_a1" data-step="-5">-</button>
+    <button style="color:green" class="stepper-btn" data-key="os_a1" data-step="5">+</button>
+  </div>
+</div>
+
+<div></div> <!-- spacer -->
+
+<div class="field">
+  <label>Sphere 2</label>
+  <div class="stepper">
+    <span class="stepper-val" id="os_s1_disp">0.00</span>
+  </div>
+
+  <div class="stepper2">
+    <button style="color:red" class="stepper-btn" data-key="os_s1" data-step="-1.00">--</button>
+    <button style="color:green" class="stepper-btn" data-key="os_s1" data-step="1.00">++</button>
+    <button style="color:red" class="stepper-btn" data-key="os_s1" data-step="-0.25">-</button>
+    <button style="color:green" class="stepper-btn" data-key="os_s1" data-step="0.25">+</button>
+  </div>
+</div>
+
+<div class="field">
+  <label>Axis 2</label>
+  <div class="stepper">
+    <span class="stepper-val" id="os_a2_disp">90</span>
+  </div>
+
+  <div class="stepper2">
+    <button style="color:red" class="stepper-btn" data-key="os_a2" data-step="-30">--</button>
+    <button style="color:green" class="stepper-btn" data-key="os_a2" data-step="30">++</button>
+    <button style="color:red" class="stepper-btn" data-key="os_a2" data-step="-5">-</button>
+    <button style="color:green" class="stepper-btn" data-key="os_a2" data-step="5">+</button>
+  </div>
+</div>
+
+
+  </div>
+  <div class="result-box empty" id="os_out">Adjust values above</div>
 </div>
 <div style="height:100px"></div>
+</div>
 
+<script>
+const state = {
+  od_a1: 0, od_a2: 90, od_s1: 2, od_s2: 2,
+  os_a1: 0, os_a2: 90, os_s1: 2, os_s2: 2,
+  wd: 2.00
+};
+
+function round025(x) { return Math.round(x * 4) / 4; }
+function fmt(x) { return (x >= 0 ? "+" : "") + x.toFixed(2); }
+function clampAxis(v) {
+  let x = Math.round(v);
+
+  // wrap around
+  x = ((x % 180) + 180) % 180;
+
+  return x;
+}
+
+function updateDisp(id, val, isAxis) {
+  let el = document.getElementById(id + "_disp");
+  if (!el) return;
+  if (isAxis) {
+  el.textContent = (val === 0 ? 180 : val);
+    el.className = "stepper-val";
+  } else {
+    el.textContent = fmt(val);
+    el.className = "stepper-val" + (val > 0 ? " pos" : val < 0 ? " neg" : "");
+  }
+}
+
+function setResult(elId, s1, s2, a1, a2, wd) {
+  let el = document.getElementById(elId);
+
+  let S = Math.max(s1, s2);
+  let C = Math.min(s1, s2) - S;
+  let A = (s1 >= s2) ? a1 : a2;
+  let finalS = S - wd;
+
+  let sc = finalS >= 0 ? "pos" : "neg";
+  let cc = C >= 0 ? "pos" : "neg";
+
+  // ✅ NO ASTIGMATISM → SPHERE ONLY
+  if (Math.abs(C) < 0.001) {
+    el.innerHTML = `<span class="${sc}">${fmt(finalS)}</span>`;
+    el.className = "result-box";
+    return;
+  }
+
+  // ✅ WITH ASTIGMATISM → FULL FORMAT
+  el.innerHTML =
+    `<span class="${sc}">${fmt(finalS)}</span>` +
+    `&nbsp;/&nbsp;<span class="${cc}">${fmt(C)}</span>` +
+    `&nbsp;&times;&nbsp;<span>${A}&deg;</span>`;
+
+  el.className = "result-box";
+}
+
+function process() {
+  ["od", "os"].forEach(eye => {
+let a1 = clampAxis(state[eye + "_a1"]);
+let a2 = clampAxis(state[eye + "_a2"]);
+
+// enforce 90° relationship BOTH ways
+if (document.activeElement?.dataset?.key === eye + "_a2") {
+  a1 = (a2 + 90) % 180;
+  state[eye + "_a1"] = a1;
+} else {
+  a2 = (a1 + 90) % 180;
+  state[eye + "_a2"] = a2;
+}
+
+    updateDisp(eye + "_a1", a1, true);
+    updateDisp(eye + "_a2", a2, true);
+
+    let svg1 = document.getElementById("svg-" + eye + "-1");
+    let svg2 = document.getElementById("svg-" + eye + "-2");
+    if (svg1) svg1.style.transform = `rotate(${-a1}deg)`;
+    if (svg2) svg2.style.transform = `rotate(${-a2}deg)`;
+
+    updateDisp(eye + "_s1", state[eye + "_s1"], false);
+    updateDisp(eye + "_s2", state[eye + "_s2"], false);
+
+    setResult(eye + "_out", state[eye + "_s1"], state[eye + "_s2"], a1, a2, state.wd);
+  });
+
+let wdEl = document.getElementById("wd_disp");
+if (wdEl) wdEl.textContent = state.wd.toFixed(2);
+
+let wdCmEl = document.getElementById("wd_cm");
+if (wdCmEl) {
+  if (state.wd !== 0) {
+    let cm = 100 / state.wd;
+    wdCmEl.textContent = cm.toFixed(0) + " cm";
+  } else {
+    wdCmEl.textContent = "";
+  }
+}
+}
+
+document.querySelectorAll(".stepper-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    let key = btn.dataset.key;
+    let step = parseFloat(btn.dataset.step);
+    if (!(key in state)) return;
+    let val = round025(state[key] + step);
+    if (key.endsWith("_a1")) val = clampAxis(val);
+    state[key] = val;
+    process();
+  });
+});
+
+process();
+
+
+
+
+
+</script>
 </body>
 </html>
