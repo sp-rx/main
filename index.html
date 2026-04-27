@@ -4,129 +4,286 @@
 <meta charset="UTF-8" />
 <title>Kiara Optom Tools</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-body{
-  margin:0;
-  padding:0;
-  font-family: Arial, sans-serif;
-  background:#d1d1d1;
-  font-size:12px;
-}
+  :root {
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --surface-hover: #f7faff;
+    --border: rgba(60,100,180,0.13);
+    --border-hover: rgba(60,100,180,0.32);
+    --accent: #3b6fd4;
+    --accent-glow: rgba(59,111,212,0.07);
+    --teal: #0fa89e;
+    --text: #1a2236;
+    --text-muted: #6b7a99;
+  }
 
-/* Container */
-.container{
-  width:90%;
-  max-width:580px;
-  margin:20px auto 40px auto;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Title */
-h1{
-  text-align:center;
-  font-size:20px;
-  font-weight:300;
-  margin-bottom:25px;
-  color:#2b2b2b;
-}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* Grid */
-.button-grid{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:12px;
-}
+  body::before {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: -10%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse, rgba(59,111,212,0.07) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    right: -10%;
+    width: 55%;
+    height: 55%;
+    background: radial-gradient(ellipse, rgba(15,168,158,0.06) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-/* Buttons */
-a.button{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 92%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 56px 0 80px;
+  }
 
-  text-decoration:none;
-  background:#f1f1f1;
-  border:1px solid #2b2b2b;
-  color:#2b2b2b;
+  .header {
+    text-align: center;
+    margin-bottom: 44px;
+    animation: fadeDown 0.6s ease both;
+  }
 
-  padding:10px;
-  text-align:center;
-  font-size:12px;
-  border-radius:12px;
-  width: auto;
-  height:auto;
-  margin-top:30px;
-}
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
 
-/* Image */
-a.button img{
-  width:130px;
-  height:130px;
-  object-fit:contain; /* keeps full image, no crop */
-  margin-bottom:20px;
-  border-radius:10px;
-}
+  .header h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(26px, 5vw, 34px);
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    color: var(--teal);
+  }
+
+  .header-line {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--teal));
+    margin: 16px auto 0;
+    border-radius: 2px;
+  }
+
+  .button-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  a.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 12px 16px;
+    text-align: center;
+    color: var(--text);
+    transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(60,100,180,0.06);
+  }
+
+  a.card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent-glow), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: inherit;
+  }
+
+  a.card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-hover);
+    background: var(--surface-hover);
+    box-shadow: 0 10px 32px rgba(59,111,212,0.12), 0 0 0 1px var(--border-hover);
+  }
+
+  a.card:hover::before { opacity: 1; }
+
+  a.card:nth-child(1) { animation-delay: 0.08s; }
+  a.card:nth-child(2) { animation-delay: 0.14s; }
+  a.card:nth-child(3) { animation-delay: 0.20s; }
+  a.card:nth-child(4) { animation-delay: 0.26s; }
+  a.card:nth-child(5) { animation-delay: 0.32s; }
+  a.card:nth-child(6) { animation-delay: 0.38s; }
+  a.card:nth-child(7) { animation-delay: 0.44s; }
+  a.card:nth-child(8) { animation-delay: 0.50s; }
+  a.card:nth-child(9) { animation-delay: 0.56s; }
+
+  .card-img-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    background: #e8eef8;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  a.card:hover .card-img-wrap img {
+    transform: scale(1.06);
+  }
+
+  .card-label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    position: relative;
+    z-index: 1;
+    transition: color 0.2s ease;
+  }
+
+  a.card:hover .card-label {
+    color: var(--text);
+  }
+
+  .card-arrow {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    font-size: 10px;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  a.card:hover .card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 44px;
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0;
+    animation: fadeUp 0.5s 0.7s ease forwards;
+    letter-spacing: 0.05em;
+  }
 </style>
 </head>
-
 <body>
 <div class="container">
-  <div style="height:80px"></div>
-  <h1>Kiara Optometry Tools</h1>
+
+  <div class="header">
+    <p class="header-eyebrow">Clinical Tools Suite</p>
+    <h1>Kiara <em>Optometry</em> Tools</h1>
+    <div class="header-line"></div>
+  </div>
 
   <div class="button-grid">
-
-    <a class="button" href="https://sp-rx.github.io/CL-SELECTOR/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/1.jpg">
-      Contact Lens Selector
+    <a class="card" href="https://sp-rx.github.io/CL-SELECTOR/" target="_blank">
+      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/1.jpg" alt="Contact Lens Selector"></div>
+      <span class="card-label">Contact Lens Selector</span>
+      <span class="card-arrow">↗</span>
     </a>
-
-    <a class="button" href="https://sp-rx.github.io/ret_helper/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/2.jpg">
-Retinoscopy Helper    </a>
-
-    <a style="display:none" class="button" href="https://sp-rx.github.io/rod/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/2.jpg">
-Retinoscopy Calculator    </a>
-    
-    <a class="button" href="https://sp-rx.github.io/OL-selector/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/3.jpg">
-      Ophthalmic Lens Selector
+    <a class="card" href="https://sp-rx.github.io/ret_helper/" target="_blank">
+      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/2.jpg" alt="Retinoscopy Helper"></div>
+      <span class="card-label">Retinoscopy Helper</span>
+      <span class="card-arrow">↗</span>
     </a>
-    
-    <a class="button" href="https://sp-rx.github.io/mobile_FCDC/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/5.jpg">
-      Add Calculator
+    <a class="card" href="https://sp-rx.github.io/OL-selector/" target="_blank">
+      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/3.jpg" alt="Ophthalmic Lens Selector"></div>
+      <span class="card-label">Ophthalmic Lens Selector</span>
+      <span class="card-arrow">↗</span>
     </a>
-    
-    <a class="button" href="https://sp-rx.github.io/super_rx/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/4.jpg">
-      SP-RX Eye Exam
+    <a class="card" href="https://sp-rx.github.io/mobile_FCDC/" target="_blank">
+      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/5.jpg" alt="Add Calculator"></div>
+      <span class="card-label">Add Calculator</span>
+      <span class="card-arrow">↗</span>
     </a>
-
-    <a class="button" href="https://sp-rx.github.io/acuvue_astig_rotator/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/6.jpg">
-      Astig Rotator
+    <a class="card" href="https://sp-rx.github.io/super_rx/" target="_blank">
+      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/4.jpg" alt="SP-RX Eye Exam"></div>
+      <span class="card-label">SP-RX Eye Exam</span>
+      <span class="card-arrow">↗</span>
     </a>
-
-    <a class="button" href="https://sp-rx.github.io/trainer_light/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/7.jpg">
-      Visualizer
+    <a class="card" href="https://sp-rx.github.io/acuvue_astig_rotator/" target="_blank">
+      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/6.jpg" alt="Astig Rotator"></div>
+      <span class="card-label">Astig Rotator</span>
+      <span class="card-arrow">↗</span>
     </a>
-
-    <a class="button" href="https://sp-rx.github.io/shop_sop/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/8.jpg">
-      Shop SOP
+    <a class="card" href="https://sp-rx.github.io/trainer_light/" target="_blank">
+      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/7.jpg" alt="Visualizer"></div>
+      <span class="card-label">Visualizer</span>
+      <span class="card-arrow">↗</span>
     </a>
-
-    <a class="button" href="https://sp-rx.github.io/Trainer/" target="_blank">
-      <img src="https://raw.githubusercontent.com/sp-rx/main/main/main/9.jpg">
-      RX Trainer
+    <a class="card" href="https://sp-rx.github.io/shop_sop/" target="_blank">
+      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/8.jpg" alt="Shop SOP"></div>
+      <span class="card-label">Shop SOP</span>
+      <span class="card-arrow">↗</span>
     </a>
-
+    <a class="card" href="https://sp-rx.github.io/Trainer/" target="_blank">
+      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/9.jpg" alt="RX Trainer"></div>
+      <span class="card-label">RX Trainer</span>
+      <span class="card-arrow">↗</span>
+    </a>
   </div>
-</div>
-<div style="height:100px"></div>
 
+  <p class="footer">Kiara Optometry &nbsp;·&nbsp; Clinical Tools Suite</p>
+</div>
 </body>
 </html>
