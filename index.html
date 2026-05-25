@@ -1,294 +1,1247 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<title>Kiara Optom Tools</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1=" />
+
+<title>Duochrome and Fan Chart Visualizer</title>
 <style>
-  :root {
-    --bg: #f0f4f8;
-    --surface: #ffffff;
-    --surface-hover: #f7faff;
-    --border: rgba(60,100,180,0.13);
-    --border-hover: rgba(60,100,180,0.32);
-    --accent: #3b6fd4;
-    --accent-glow: rgba(59,111,212,0.07);
-    --teal: #0fa89e;
-    --text: #1a2236;
-    --text-muted: #6b7a99;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    top: -20%;
-    left: -10%;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(ellipse, rgba(59,111,212,0.07) 0%, transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-  }
-  body::after {
-    content: '';
-    position: fixed;
-    bottom: -20%;
-    right: -10%;
-    width: 55%;
-    height: 55%;
-    background: radial-gradient(ellipse, rgba(15,168,158,0.06) 0%, transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    width: 92%;
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 56px 0 80px;
-  }
-
-  .header {
-    text-align: center;
-    margin-bottom: 44px;
-    animation: fadeDown 0.6s ease both;
-  }
-
-  .header-eyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 10px;
-  }
-
-  .header h1 {
-    font-family: 'DM Serif Display', Georgia, serif;
-    font-size: clamp(26px, 5vw, 34px);
-    font-weight: 400;
-    color: var(--text);
-    line-height: 1.2;
-  }
-
-  .header h1 em {
-    font-style: italic;
-    color: var(--teal);
-  }
-
-  .header-line {
-    width: 40px;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--teal));
-    margin: 16px auto 0;
-    border-radius: 2px;
-  }
-
-  .button-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
-
-  a.card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-decoration: none;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 12px 16px;
-    text-align: center;
-    color: var(--text);
-    transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
-    opacity: 0;
-    animation: fadeUp 0.5s ease forwards;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(60,100,180,0.06);
+    margin: 0;
+    font-family: Arial;
+    font-size: 15px;
+    color: #404040;
+    height: 100vh;
+    justify-content: center;
+    background: lightgrey;
   }
 
-  a.card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--accent-glow), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    border-radius: inherit;
+.duochrome {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  transform: scale(0.5);
+  transform-origin: center;
+}
+
+.duo-side {
+  position: relative;
+  width: 300px;
+  height: 650px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+  contain: paint;
+  isolation: isolate;
+}
+
+/* fallback for overflow: clip */
+@supports (overflow: clip) {
+  .duo-side {
+    overflow: clip;
+  }
+}
+
+/* split field */
+#redSide  { clip-path: inset(0 0 0 9px); }
+#blueSide { clip-path: inset(0 9px 0 0); }
+
+/* base image */
+.duo-side img.base {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+
+  display: block;
+  will-change: filter;
+}
+
+/* overlay image (for blur / shift effects) */
+.duo-side img.overlay {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+
+  pointer-events: none;
+
+  will-change: transform, filter, opacity;
+  backface-visibility: hidden;
+  transform: translate3d(0,0,0);
+}
+/* Button styling */
+.toggle-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #fff;
+  color: black;
+  cursor: pointer;
+  border-radius: 5px;
+  user-select: none;
+}
+
+/* Content styling */
+.toggle-content {
+  display: block; /* default visible */
+}
+  #header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 10px;
   }
 
-  a.card:hover {
-    transform: translateY(-4px);
-    border-color: var(--border-hover);
-    background: var(--surface-hover);
-    box-shadow: 0 10px 32px rgba(59,111,212,0.12), 0 0 0 1px var(--border-hover);
+.reso-btn {
+    border: 1px solid grey;
+    font-size: 12px;
+    padding: 2px;
+    height: 70px;
+    width: 75px;
+    border-radius: 10px;
+    color: #404040;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    user-select:none;
+    font-weight:600;
+}
+
+
+.section{
+  background:#c1c1c1;
+  border:1px solid var(--line);
+  border-radius:50px;
+  padding:30px 0px 40px 0px;
+  margin:0px 0;
+  width:700px;
+}
+  #container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
 
-  a.card:hover::before { opacity: 1; }
 
-  a.card:nth-child(1) { animation-delay: 0.08s; }
-  a.card:nth-child(2) { animation-delay: 0.14s; }
-  a.card:nth-child(3) { animation-delay: 0.20s; }
-  a.card:nth-child(4) { animation-delay: 0.26s; }
-  a.card:nth-child(5) { animation-delay: 0.32s; }
-  a.card:nth-child(6) { animation-delay: 0.38s; }
-  a.card:nth-child(7) { animation-delay: 0.44s; }
-  a.card:nth-child(8) { animation-delay: 0.50s; }
-  a.card:nth-child(9) { animation-delay: 0.56s; }
+  #cylVal { font-weight: bold; margin-left:5px; }
 
-  .card-img-wrap {
-    width: 80px;
-    height: 80px;
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 12px;
-    background: #e8eef8;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-  }
-
-  .card-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.3s ease;
-  }
-
-  a.card:hover .card-img-wrap img {
-    transform: scale(1.06);
-  }
-
-  .card-label {
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--text-muted);
-    line-height: 1.4;
-    letter-spacing: 0.01em;
-    position: relative;
-    z-index: 1;
-    transition: color 0.2s ease;
-  }
-
-  a.card:hover .card-label {
-    color: var(--text);
-  }
-
-  .card-arrow {
-    position: absolute;
-    bottom: 10px;
-    right: 12px;
+  button {
+    border: 1px solid grey;
     font-size: 10px;
-    color: var(--accent);
-    opacity: 0;
-    transform: translateX(-4px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    padding: 2px;
+    height: 30px;
+    width: 75px;
+    border-radius: 10px;
+    color: #404040;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    user-select:none;
+    font-weight:600;
+
   }
 
-  a.card:hover .card-arrow {
-    opacity: 1;
-    transform: translateX(0);
+  .smallbtn {
+    border: 1px solid grey;
+    font-size: 15px;
+    padding: 2px;
+    height: 25px;
+    width: 100px;
+    border-radius: 10px;
+    color: #404040;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    user-select:none;
   }
 
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
+#fan-wrapper {
+  display: inline-flex;   /* key */
+  width: 520px;
+  height: 450px;
+  background-image: url("https://raw.githubusercontent.com/kiaraoptometrypx/trainer_light/main/FCBG.jpg");
+  background-size: cover;       
+  background-position: center;  
+  background-repeat: no-repeat;
+  position: relative;
+  display: flex;
+  justify-content: center;     
+  align-items: center;         
+  overflow: hidden;            
+  border-radius: 50px;          
+}
+
+
+#fan-container {
+  width: 480px;       /* fan smaller than wrapper */
+  height: 480px;
+  background: transparent;
+  display: block;
+  margin-top: 35px;   
+  margin-left: 3px;
+}
+
+#page-wrapper {
+  display: inline-flex;   /* key */
+  justify-content: center;    
+  max-width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bg-dc {
+  width: 520px;
+  height: 350px;
+  background-image: url("https://raw.githubusercontent.com/kiaraoptometrypx/trainer_light/main/DCBG.jpg");
+  background-size: 120% auto;  /* zoom in 20% */
+  background-position: center calc(50% - 20%) ; 
+  background-repeat: no-repeat;
+  margin: 0 auto;
+  border-radius: 50px;
+}
+
+#dc-container{
+  display: inline-flex;   /* key */
+  align-items:center;
+  gap:20px;
+  justify-content: center;    
+}
+
+.dc-controls{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.reso-btn.active {
+  background:darkred;
+  color:white;
+
   }
 
-  .footer {
-    text-align: center;
-    margin-top: 44px;
-    font-size: 11px;
-    color: var(--text-muted);
-    opacity: 0;
-    animation: fadeUp 0.5s 0.7s ease forwards;
-    letter-spacing: 0.05em;
-  }
+
 </style>
 </head>
+
+
 <body>
-<div class="container">
 
-  <div class="header">
-    <p class="header-eyebrow">Clinical Tools Suite</p>
-    <h1>Kiara <em>Optometry</em> Tools</h1>
-    <div class="header-line"></div>
-  </div>
+<div style="max-width:90%; margin-top:2000px">
 
-  <div class="button-grid">
-    <a class="card" href="https://sp-rx.github.io/CL-SELECTOR/" target="_blank">
-      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/1.jpg" alt="Contact Lens Selector"></div>
-      <span class="card-label">Contact Lens Selector</span>
-      <span class="card-arrow">↗</span>
-    </a>
-    <a class="card" href="https://sp-rx.github.io/ret_helper/" target="_blank">
-      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/2.jpg" alt="Retinoscopy Helper"></div>
-      <span class="card-label">Retinoscopy Helper</span>
-      <span class="card-arrow">↗</span>
-    </a>
-    <a class="card" href="https://sp-rx.github.io/OL-selector/" target="_blank">
-      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/3.jpg" alt="Ophthalmic Lens Selector"></div>
-      <span class="card-label">Ophthalmic Lens Selector</span>
-      <span class="card-arrow">↗</span>
-    </a>
-    <a class="card" href="https://sp-rx.github.io/snellen/" target="_blank">
-      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/snellen.jpg" alt="snellen"></div>
-      <span class="card-label">Snellen Progress</span>
-      <span class="card-arrow">↗</span>
-    </a>
-    <a class="card" href="https://sp-rx.github.io/super_rx_2/" target="_blank">
-      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/4.jpg" alt="SP-RX Eye Exam"></div>
-      <span class="card-label">SP-RX Eye Exam</span>
-      <span class="card-arrow">↗</span>
-    </a>
-    <a class="card" href="https://sp-rx.github.io/acuvue_astig_rotator/" target="_blank">
-      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/6.jpg" alt="Astig Rotator"></div>
-      <span class="card-label">Astig Rotator</span>
-      <span class="card-arrow">↗</span>
-    </a>
-    <a class="card" href="https://sp-rx.github.io/trainer_light/" target="_blank">
-      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/7.jpg" alt="Visualizer"></div>
-      <span class="card-label">Visualizer</span>
-      <span class="card-arrow">↗</span>
-    </a>
-    <a class="card" href="https://sp-rx.github.io/shop_sop/" target="_blank">
-      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/8.jpg" alt="Shop SOP"></div>
-      <span class="card-label">Shop SOP</span>
-      <span class="card-arrow">↗</span>
-    </a>
-    <a class="card" href="https://sp-rx.github.io/Trainer/" target="_blank">
-      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/9.jpg" alt="RX Trainer"></div>
-      <span class="card-label">RX Trainer</span>
-      <span class="card-arrow">↗</span>
-    </a>
-        <a class="card" href="https://sp-rx.github.io/mobile_FCDC/" target="_blank">
-      <div class="card-img-wrap"><img src="https://raw.githubusercontent.com/sp-rx/main/main/main/-.jpg" alt="mobile_FCDC"></div>
-      <span class="card-label">Mobile FCDC</span>
-      <span class="card-arrow">↗</span>
-    </a>
-  </div>
+<table>
 
-  <p class="footer">Kiara Optometry &nbsp;·&nbsp; Clinical Tools Suite</p>
+
+<tr>
+<td>
+
+
+
+
+<div style="text-align:center; margin-top:500px; margin-bottom:0px">
+<span style="font-size:25px"><b>Kiara Optometry Near FC DC</b></span>
+
+
+</td></tr>
+
+<tr><td>
+<div style="display:none">
+
+<div style="height:60px"></div>
+
+<div class="section">
+
+
+<span style="font-size:25px"><b>Sphere Deficit</b></span><br>
+
+<div style="margin-top:10px"></div>
+
+<div class="toggle-button" onclick="toggleDiv(this)">Show / Hide</div>
+
+<div class="toggle-content">
+
+
+
+<div style="margin-top:20px" >
+  <span><b>Which type of duochrome pattern do you see?</b></span>
+
 </div>
+
+<div style="margin-top:10px">
+  <span style="font-size:25px"><b>SPH Value Correction <span id="dcHint">0.00</span></span>
+
+</div>
+
+<div style="height:20px"></div>
+
+<div id="dc-container">
+  
+  <!-- Left controls -->
+  <div class="dc-controls">
+    <button class="button" onclick="selectDC(1)"><b><span style="color:darkred"> Red 1</span></b></button>
+    <button class="button" onclick="selectDC(2)"><b><span style="color:darkred"> Red 2</span></b></button>
+    <button class="button" onclick="selectDC(5)"><b><span style="color:#404040">Both Clear</span></b></button>
+  </div>
+
+  <!-- Center image -->
+  <div class="bg-dc"></div>
+
+  <!-- Right controls -->
+  <div class="dc-controls">
+    <button class="button" onclick="selectDC(3)"><b><span style="color:darkblue"> Blue 3</span></b></button>
+    <button class="button" onclick="selectDC(4)"><b><span style="color:darkblue"> Blue 4</span></b></button>
+    <button class="button" onclick="selectDC(6)"><b><span style="color:#404040">Both Blur</span></b></button>
+  </div>
+
+</div>
+
+
+
+
+</div>
+</div>
+</div>
+</td></tr>
+
+</table>
+
+</div>
+
+
+<table>
+
+
+
+
+<tr>
+<td align="center" style="text-align:center;">
+
+
+<div class="section" style="margin-top:20px;">
+
+
+
+
+  <span><b>Current Sphere & Delta</b></span>
+<div style="margin-top:20px">
+
+</div>
+<div style="background-color:white; width:80%; border-radius:50px; margin:0 auto;"><div class="duo-wrap rx-block">
+  <div class="duochrome">
+
+    <div class="duo-side">
+      <img id="redImg"
+           src="https://raw.githubusercontent.com/sp-rx/Trainer/main/RED_1.png">
+    </div>
+
+    <div class="duo-side">
+      <img id="blueImg"
+           src="https://raw.githubusercontent.com/sp-rx/Trainer/main/BLUE_1.png">
+    </div>
+
+  </div>
+</div>
+
+
+</div>
+
+<div>
+Delta Value<input  style="margin-left:20px; margin-top:20px; text-align:center; width:30%; height:30px; border-radius:6px"
+  type="text"
+  id="sph_test"
+  value="+0.00"
+  oninput="syncDelta(this)"
+>
+
+<script>
+function syncDelta(el){
+  const val = parseFloat(el.value);
+
+  const delta = isNaN(val) ? 0 : val;
+
+  const deltaInput = document.getElementById("deltaInput");
+  deltaInput.value = delta.toFixed(2);
+
+  refreshScale(); // fires the same logic as your button
+}</script>
+
+
+  <button onclick="adj('sph_test', -0.25)">-</button>
+  <button onclick="adj('sph_test',  0.25)">+</button>
+
+
+  </div>
+<div>
+
+  Current Sph <input  style="margin-left:20px; margin-top:20px; text-align:center; width:30%; height:30px; border-radius:6px"
+    type="number"
+    id="balanceInput"
+    step="0.25"
+    value="-0.00"
+    oninput="refreshScale()"
+  >
+  <button type="button" onclick="adjustBalance(-0.25)">-</button>
+  <button type="button" onclick="adjustBalance(0.25)">+</button>
+
+  <button style="display:none; height:40px" onclick="refreshScale()">Current</button>
+
+
+<script>
+function adjustBalance(step){
+  const el = document.getElementById("balanceInput");
+
+  let v = parseFloat(el.value);
+  if (isNaN(v)) v = 0;
+
+  v = Math.round((v + step) * 4) / 4; // keep 0.25 steps
+
+  el.value = v.toFixed(2);
+
+  refreshScale();
+}</script>
+    </div>
+
+<script>
+/* ========= BUTTON ADJ ========= */
+window.adj = function(type, step){
+  const el = document.getElementById(type);
+  if(!el) return;
+
+  let v = parseFloat(el.value) || 0;
+  v += step;
+  el.value = v.toFixed(2);
+
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+};
+
+/* ========= ELEMENTS ========= */
+const redImg  = document.getElementById('redImg');
+const blueImg = document.getElementById('blueImg');
+const sphInput = document.getElementById('sph_test');
+
+/* ========= CONSTANTS ========= */
+const K_BLUR_PER_D = 4;
+
+/* ========= STATE ========= */
+function recompute(){
+  const sph = parseFloat(sphInput.value) || 0;
+
+  render(sph);
+}
+
+function render(sph){
+  const s = Math.abs(sph);
+
+  const primary = s * K_BLUR_PER_D;
+  const secondary = (s >= 0.75) ? ((s - 0.5) * K_BLUR_PER_D) : 0;
+
+  let blurRed = 0;
+  let blurBlue = 0;
+
+  if(sph > 0){
+    blurRed  = primary;
+    blurBlue = secondary;
+  } else if(sph < 0){
+    blurBlue = primary;
+    blurRed  = secondary;
+  }
+
+  redImg.style.filter  = `blur(${blurRed.toFixed(2)}px)`;
+  blueImg.style.filter = `blur(${blurBlue.toFixed(2)}px)`;
+}
+
+/* ========= EVENTS ========= */
+sphInput.addEventListener('input', recompute);
+
+/* ========= INIT ========= */
+recompute();
+</script>
+
+
+<div style="height:20px"></div>
+
+
+
+
+<div style="text-align:center; margin:0px auto 0 auto; font-family:arial; width:95%;">
+
+  <div style="display:flex; gap:15px; align-items:center; justify-content:center;">
+
+    <div style="display:none">
+      <input style="text-align:center; width:50%; height:30px; border-radius:6px" type="number" id="deltaInput" step="0.25" value="0.00">
+      <button style="height:40px" onclick="refreshScale()">To balance</button>
+    </div>
+  </div>
+
+<div style="height:10px"></div>
+
+  <div style="width:95%; margin:0 auto;">
+      <img src="https://raw.githubusercontent.com/kiaraoptometrypx/trainer_light/main/DCSCALE.jpg"
+           style="width:100%; display:block; border-radius:30px;">
+  </div>
+
+
+<div style="width:80%; margin:0 auto;">
+ <!-- TICKS -->
+  <div id="tickRow"
+       style="display:flex; justify-content:space-between; margin-top:-95px">
+  </div>
+
+  <!-- NUMBERS -->
+  <div id="numberRow"
+       style="display:flex; justify-content:space-between; margin-top:5px; font-size:13px;">
+  </div>
+
+  <!-- CURRENT ARROW -->
+  <div id="arrowRow"
+       style="display:flex; justify-content:space-between; margin-top:5px; height:40px; font-size:13px;">
+  </div>
+
+</div>
+</div>
+
+<div style="height:20px"></div>
+
+
+
+
+
+<script>
+let numbers = [];
+
+function snap(input) {
+    let v = parseFloat(input.value);
+    if (isNaN(v)) v = 0;
+    v = Math.round(v * 4) / 4;
+    input.value = v.toFixed(2);
+}
+
+function formatPower(v) {
+    if (v === "Outside") return "Outside";
+    let num = parseFloat(v);
+    if (num > 0) return "+" + num.toFixed(2);
+    return num.toFixed(2);
+}
+
+// SINGLE FUNCTION TO UPDATE EVERYTHING
+function refreshScale() {
+
+    snap(document.getElementById("balanceInput"));
+    snap(document.getElementById("deltaInput"));
+
+    const current = parseFloat(document.getElementById("balanceInput").value);
+    const delta = parseFloat(document.getElementById("deltaInput").value);
+
+    // Balance = middle of scale
+    const balance = current + delta;
+
+    const range = 1.00;
+    const step = 0.25;
+
+    numbers = [];
+
+    const leftEnd = balance + range;
+    const rightEnd = balance - range;
+
+    for (let v = leftEnd; v > balance; v -= step)
+        numbers.push(v.toFixed(2));
+
+    numbers.push(balance.toFixed(2));
+
+    for (let v = balance - step; v >= rightEnd; v -= step)
+        numbers.push(v.toFixed(2));
+
+    numbers.unshift("Outside");
+    numbers.push("Outside");
+
+    const tickRow = document.getElementById("tickRow");
+    const numberRow = document.getElementById("numberRow");
+    const arrowRow = document.getElementById("arrowRow");
+
+    tickRow.innerHTML = "";
+    numberRow.innerHTML = "";
+    arrowRow.innerHTML = "";
+
+    // DRAW TICKS & NUMBERS
+    numbers.forEach((n) => {
+        // tick
+        const tickSlot = document.createElement("div");
+        tickSlot.style.flex = "1";
+        tickSlot.style.textAlign = "center";
+
+        const tick = document.createElement("div");
+        tick.style.width = "2px";
+        tick.style.height = "14px";
+        tick.style.background = "black";
+        tick.style.margin = "0 auto";
+        tickSlot.appendChild(tick);
+
+        tickRow.appendChild(tickSlot);
+
+        // number
+        const numberSlot = document.createElement("div");
+        numberSlot.style.flex = "1";
+        numberSlot.style.textAlign = "center";
+        numberSlot.innerText = formatPower(n);
+
+        numberRow.appendChild(numberSlot);
+    });
+
+    // DRAW ARROW AT CURRENT
+    const numericIndexes = numbers
+        .map((v,i) => isNaN(parseFloat(v)) ? null : i)
+        .filter(v => v !== null);
+
+    let index;
+
+    if (current > parseFloat(numbers[numericIndexes[0]]))
+        index = 0;
+    else if (current < parseFloat(numbers[numericIndexes[numericIndexes.length-1]]))
+        index = numbers.length - 1;
+    else {
+        index = numericIndexes.reduce((prev,curr) =>
+            Math.abs(parseFloat(numbers[curr]) - current) <
+            Math.abs(parseFloat(numbers[prev]) - current)
+            ? curr : prev
+        , numericIndexes[0]);
+    }
+
+    for (let i = 0; i < numbers.length; i++) {
+        const slot = document.createElement("div");
+        slot.style.flex = "1";
+        slot.style.textAlign = "center";
+
+        if (i === index) {
+            const arrow = document.createElement("div");
+            arrow.style.width = "0";
+            arrow.style.height = "0";
+            arrow.style.borderLeft = "7px solid transparent";
+            arrow.style.borderRight = "7px solid transparent";
+            arrow.style.borderBottom = "14px solid black";
+            arrow.style.margin = "0 auto 4px auto";
+            slot.appendChild(arrow);
+
+            const label = document.createElement("div");
+            label.innerText = formatPower(current) + " (Current)";
+            slot.appendChild(label);
+        }
+
+        arrowRow.appendChild(slot);
+    }
+}
+
+refreshScale();
+</script>
+
+
+
+</div>
+</div>
+
+  
+</td></tr>
+
+
+</table>
+
+
+
+<table>
+
+
+<tr>
+<td align="center" style="text-align:center;">
+<div class="section" style="margin-top:100px">
+
+  <div id="page-wrapper">
+
+    <span><b>Astigmatism Delta</b></span>
+    <div style="margin-top:10px"></div>
+
+    <div style="display:none;" class="toggle-button" onclick="toggleDiv(this)">
+      Show / Hide
+    </div>
+
+    <div class="toggle-content">
+
+
+
+      <div style="display:none; margin-top:20px" class="header">
+        <button class="reso-btn" onclick="setMode('pc', this)">Normal Reso</button>
+        <button class="reso-btn" onclick="setMode('ipad', this)">Higher Reso</button>
+        <button id="fogBtn" onclick="toggleFogging()">No Blur</button>
+      </div>
+
+      <div id="container">
+
+        <div id="left-controls">
+          <div>
+            <b>Line</b>
+            <button style="margin-left:20px" onclick="changeCyl(-0.25)">Darken</button>
+            <button onclick="changeCyl(0.25)">Lighten</button>
+            <button style="margin-left:20px" onclick="rotateFan(-15)"><<</button>
+            <button onclick="rotateFan(15)">>></button>
+
+
+          </div>
+<div style="margin-top:10px">
+ <span ><b>CYL Value <span style="color:darkblue" id="cylVal">0.00</span></b> </span>
+</div>
+          <div style="margin-top:10px" id="fan-wrapper">
+
+
+            <canvas id="fan-container"></canvas>
+          </div>
+
+        </div> <!-- left-controls -->
+
+      </div> <!-- container -->
+
+    </div> <!-- toggle-content -->
+
+  </div> <!-- page-wrapper -->
+
+</div> <!-- section -->
+
+
+</td></tr>
+
+
+</div>
+
+
+
+
+
+
+<tr><td>
+
+<div class="section" style="display:none; margin-top:20px">
+
+<div style="text-align:center; margin-bottom:15px;">
+<div>
+  <span style="font-size:25px"><b>Astigmatism Analysis & Explanation</b></span>
+</div>
+
+<div style="margin-top:10px"></div>
+
+<div class="toggle-button" onclick="toggleDiv(this)">Show / Hide</div>
+
+<div class="toggle-content" style="display:none">
+
+
+<div style="margin-top:20px"></div>
+<span style="font-size:25px"><b>Astig Notes</b></span>
+
+<div style="display:flex; align-items:center; justify-content:center; margin-bottom:15px; gap:10px;">
+  <label for="astigBothEye" style="width:100px; text-align:right;"><b>Both Eye:</b></label>
+  <textarea placeholder="RX to Balance, Additional Notes, Current RX.." 
+    id="astigBothEye" rows="3"
+    style="flex:1; font-size:15px; border:0px solid #000; padding:5px; border-radius:5px;"></textarea>
+</div>
+
+<div style="display:flex; align-items:center; justify-content:center; margin-bottom:15px; gap:10px;">
+  <label for="astigRightEye" style="width:100px; text-align:right;"><b>Right Eye:</b></label>
+  <textarea placeholder="RX to Balance, Additional Notes, Current RX.." 
+    id="astigRightEye" rows="3"
+    style="flex:1; font-size:15px; border:0px solid #000; padding:5px; border-radius:5px;"></textarea>
+</div>
+
+<div style="display:flex; align-items:center; justify-content:center; margin-bottom:15px; gap:10px;">
+  <label for="astigLeftEye" style="width:100px; text-align:right;"><b>Left Eye:</b></label>
+  <textarea placeholder="RX to Balance, Additional Notes, Current RX.." 
+    id="astigLeftEye" rows="3"
+    style="flex:1; font-size:15px; border:0px solid #000; padding:5px; border-radius:5px;"></textarea>
+</div>
+
+
+
+<div style="margin-top:40px" >
+
+
+<span style="font-size:20">
+  - <b>Mirror from above 
+    <span style="color:darkred" id="cylMirror">0.00</span>
+  </b> -
+</span><br><br>
+
+  <span style="font-size:25px"><b>Astigmatism condition <span>- </span> <span id="astigCylVal">0.00</span> <span> x </span> <span id="astigAxisVal">180</span></b></span>
+</div>
+
+<br>
+
+
+
+<div id="astig-container" style="display:flex; justify-content:center; align-items:center; gap:20px;">
+
+  <!-- Left Controls: INCREASE (+) -->
+  <div style="display:flex; flex-direction:column; gap:5px; align-items:center;">
+    <b>Astigmatism</b>
+    <button onclick="adjCyl(-0.25)" class="btn-plus">Lower</button>
+
+    <br><b>Rotate</b>
+    <button onclick="adjAxis(-45)" class="btn-plus"><<<</button>
+    <button onclick="adjAxis(-15)" class="btn-plus"><<</button>
+    <button onclick="adjAxis(-5)" class="btn-plus"><</button>
+<br>
+
+    <button onclick="adjustLetterSize(50)" class="btn-plus">Bigger Size</button>
+  <button style="display:none" onclick="setBlurMode(10)">Far-Sighted</button>
+
+  </div>
+
+  <!-- Center Canvas -->
+  <canvas id="astigCanvas" width="500" height="600"
+    style="background:#fff; border:1px solid #ccc; border-radius:50px;">
+  </canvas>
+
+  <!-- Right Controls: DECREASE (−) -->
+  <div style="display:flex; flex-direction:column; gap:5px; align-items:center;">
+    <b>Astigmatism</b>
+    <button onclick="adjCyl(0.25)" class="btn-minus">Higher</button>
+
+    <br><b>Rotate</b>
+    <button onclick="adjAxis(45)" class="btn-plus">>>></button>
+    <button onclick="adjAxis(15)" class="btn-plus">>></button>
+    <button onclick="adjAxis(5)" class="btn-minus">></button>
+<br>
+
+    <button onclick="adjustLetterSize(-50)" class="btn-minus">Smaller Size</button>
+  <button style="display:none" onclick="setBlurMode(5)">Near-Sighted</button>
+
+  </div>
+
+</div>
+
+
+<script>
+const aCanvas = document.getElementById("astigCanvas");
+const aCtx = aCanvas.getContext("2d");
+
+let cyl = 0.00;
+let axis = 180;
+let letterSize = 250; // starting font size
+let blurMultiplier = 5; // default
+
+
+const cylDisplay = document.getElementById("astigCylVal");
+const axisDisplay = document.getElementById("astigAxisVal");
+
+/* ===== Directional Blur ===== */
+function directionalBlur(imageData, angle, strength) {
+    const w = imageData.width;
+    const h = imageData.height;
+    const src = imageData.data;
+    const output = aCtx.createImageData(w, h);
+    const dst = output.data;
+    const dx = Math.cos(angle);
+    const dy = Math.sin(angle);
+const radius = Math.floor(strength);
+if (radius <= 0) return imageData;
+
+    for (let y=0;y<h;y++){
+        for(let x=0;x<w;x++){
+            let r=0,g=0,b=0,a=0,count=0;
+            for(let i=-radius;i<=radius;i++){
+                let sx = Math.round(x+dx*i);
+                let sy = Math.round(y+dy*i);
+                if(sx>=0 && sx<w && sy>=0 && sy<h){
+                    let idx = (sy*w+sx)*4;
+                    r+=src[idx]; g+=src[idx+1]; b+=src[idx+2]; a+=src[idx+3];
+                    count++;
+                }
+            }
+            let di = (y*w+x)*4;
+            dst[di]=r/count; dst[di+1]=g/count; dst[di+2]=b/count; dst[di+3]=a/count;
+        }
+    }
+    return output;
+}
+
+/* ===== Text Wrapping ===== */
+function wrapText(text, x, y, maxWidth, lineHeight){
+    const words = text.split(" ");
+    let line = "";
+    for(let n=0;n<words.length;n++){
+        let testLine = line + words[n] + " ";
+        let metrics = aCtx.measureText(testLine);
+        if(metrics.width>maxWidth && n>0){
+            aCtx.fillText(line,x,y);
+            line=words[n]+" ";
+            y+=lineHeight;
+        } else line=testLine;
+    }
+    aCtx.fillText(line,x,y);
+}
+
+/* ===== Controls ===== */
+function adjCyl(step){ cyl = Math.max(0, Math.min(3, cyl+step)); drawAstig(); }
+function adjAxis(step){ axis=(axis+step+180)%180; drawAstig(); }
+function adjustLetterSize(delta){ letterSize=Math.max(20,letterSize+delta); drawAstig(); }
+
+/* ===== Main Draw ===== */
+function drawAstig(){
+    aCtx.clearRect(0,0,aCanvas.width,aCanvas.height);
+
+    // Paragraph (scales with letter size)
+    const para = "Astigmatism occurs when the eye is uneven, causing light to defocus for some area.";
+    const paraSize = Math.max(15, Math.floor(letterSize/5));
+    aCtx.font = `${paraSize}px Arial`;
+    aCtx.fillStyle="black";
+    aCtx.textAlign="center";
+    aCtx.textBaseline="top";
+    wrapText(para, aCanvas.width/2, 50, 450, paraSize+5);
+
+    // Apply blur
+    const imgData = aCtx.getImageData(0,0,aCanvas.width,aCanvas.height);
+const blurred = directionalBlur(
+    imgData,
+    (axis+90)*Math.PI/180,
+    cyl * blurMultiplier
+);
+    aCtx.putImageData(blurred,0,0);
+
+    // Update display
+cylDisplay.textContent = (cyl).toFixed(2);
+    axisDisplay.textContent = axis;
+}
+
+function setBlurMode(value){
+    blurMultiplier = value;
+    drawAstig();
+}
+
+drawAstig();
+</script>
+
+
+
+
+</td></tr>
+
+
+
+
+</div>
+
+<tr style="height:500px"><td>
+</table>
+
+
+</div>
+
+
+
+
+
+<script>
+function selectDC(val){
+  const dcHint = document.getElementById("dcHint");
+
+  switch(val){
+    case 1:
+      dcHint.textContent = "- 0.50";
+      dcHint.style.color = "darkred";
+      break;
+    case 2:
+      dcHint.textContent = "- 0.25";
+      dcHint.style.color = "darkred";
+      break;
+    case 3:
+      dcHint.textContent = "+ 0.25";
+      dcHint.style.color = "darkblue";
+      break;
+    case 4:
+      dcHint.textContent = "+ 0.50";
+      dcHint.style.color = "darkblue";
+      break;
+    case 5:
+      dcHint.textContent = "0.00";
+      dcHint.style.color = "#404040";
+      break;
+    case 6:
+      dcHint.textContent = "Requires Astig Test";
+      dcHint.style.color = "#404040";
+      break;
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+const canvas = document.getElementById('fan-container');
+const ctx = canvas.getContext('2d');
+
+/* ===== State ===== */
+let cylBlur = 0.00;
+let fogOn = false;
+let fogStrength = 0.75;
+let angle = 0;
+let deviceMode = 'ipad'; // default
+
+
+
+const cylVal = document.getElementById('cylVal');
+const fogBtn = document.getElementById('fogBtn');
+const cylMirror = document.getElementById('cylMirror');
+
+/* ===== Display ===== */
+function updateCylDisplay() {
+  let axis = angle % 180;
+  if (axis === 0) axis = 180;
+
+  // Mapping: every 15° step
+  const clockMap = {
+    0: "9 ‑ 3",
+    15: "9:30 ‑ 3:30",
+    30: "10 ‑ 4",
+    45: "10:30 ‑ 4:30",
+    60: "11 ‑ 5",
+    75: "11:30 ‑ 5:30",
+    90: "12 ‑ 6",
+    105: "12:30 ‑ 6:30",
+    120: "1 ‑ 7",
+    135: "1:30 ‑ 7:30",
+    150: "2 ‑ 8",
+    165: "2:30 ‑ 8:30",
+    180: "9 ‑ 3"
+  };
+
+  // Find nearest step
+  let step = Math.round(axis / 15) * 15;
+  if(step > 180) step = 180;
+
+  const description = clockMap[step];
+
+const powerPart = `+${cylBlur.toFixed(2)} × ${axis.toString().padStart(3,'0')}`;
+
+let minusAxis = axis + 90;
+if (minusAxis > 180) minusAxis -= 180;
+
+const minusPowerPart = `-${cylBlur.toFixed(2)} × ${minusAxis.toString().padStart(3,'0')}`;
+
+const fullText = `
+    <span style="color:#404040;">${description} Delta</span>
+<br><br>
+  <span style="color:#1C5561;">${powerPart}</span>
+  <span style="color:#404040;">&nbsp;&nbsp;or&nbsp;&nbsp;</span>
+  <span style="color:darkred;">${minusPowerPart}</span>
+`;
+
+// Original (with description)
+cylVal.innerHTML = fullText;
+
+// Mirror (without description)
+cylMirror.innerHTML = powerPart;
+}
+
+updateCylDisplay();
+
+
+
+/* ===== Controls ===== */
+function toggleFogging() {
+  fogOn = !fogOn;
+  fogBtn.textContent = fogOn ? 'Blur ON' : 'No Blur' ;
+  drawFan();
+}
+
+function changeCyl(delta) {
+  cylBlur = Math.max(0, +(cylBlur + delta).toFixed(2));
+  updateCylDisplay();
+  drawFan();
+}
+
+function rotateFan(delta){
+  angle = (angle + delta) % 180;
+  if (angle < 0) angle += 180; // ensure positive
+  updateCylDisplay();
+  drawFan();
+}
+
+function setMode(mode, el){
+  deviceMode = mode;
+
+  // remove active from all
+  document.querySelectorAll(".reso-btn")
+    .forEach(b => b.classList.remove("active"));
+
+  // activate clicked
+  el.classList.add("active");
+
+  drawFan();
+}
+
+function setupCanvas(canvas, ctx) {
+  const dpr = window.devicePixelRatio || 1;
+
+  const rect = canvas.getBoundingClientRect();
+  canvas.width  = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+
+function drawFan() {
+const rect = canvas.getBoundingClientRect();
+const cw = rect.width;
+const ch = rect.height;
+const cx = cw / 2;
+const cy = ch / 2;
+
+  const outerR = cw * 0.29;
+  const innerR = cw * 0.075;
+  const lineLen = cw * 0.25;
+  const dotOffset = cw * 0.275;
+  const fanAngles = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165];
+  const maxBlur = deviceMode === 'ipad' ? 2.5 : 1.5;
+  const totalShades = 12; // number of incremental layers
+  
+  ctx.clearRect(0, 0, cw, ch);
+
+  /* Outer white circle */
+  ctx.beginPath();
+  ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+  ctx.fillStyle = 'white';
+  ctx.fill();
+
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  function diff180(a, b) {
+    let d = (a - b + 180) % 180;
+    return Math.min(d, 180 - d);
+  }
+
+  fanAngles.forEach(a => {
+    const rel = diff180(a, angle);
+    const effectiveRel = Math.min(rel, 90);
+    const basePower = deviceMode === 'ipad' ? 1 : 1;   // shape at low cyl
+    const cylInfluence = 0.35;       // how much cyl affects curve
+
+
+
+const dynamicPower = basePower - (cylBlur * cylInfluence);
+const t = effectiveRel / 90;
+
+const rawBlur = Math.min(
+  Math.pow(t, Math.max(0.2, dynamicPower)) * (cylBlur * 2.5)
+  + (fogOn ? fogStrength : 0),
+  maxBlur
+);
+
+const NONLINEAR_EXP = 1;  // <1 = compress high values, >1 = exaggerate
+const shadeOffset = Math.pow(rawBlur, NONLINEAR_EXP) / totalShades * cw * 0.01;
+
+
+for (let i = 0; i < totalShades; i++) {
+  ctx.save();
+  ctx.rotate(a * Math.PI / 180);
+
+  const offset = (i - (totalShades - 1) / 2) * shadeOffset;
+
+  // Spread fraction based on index, not offset
+  const spreadFraction = Math.abs(i - (totalShades - 1) / 2) / ((totalShades - 1) / 2);
+
+  // line width decreases from center to edges
+  const maxLineWidth = 2.0;
+  const minLineWidth = 3.0;
+  ctx.lineWidth = maxLineWidth - spreadFraction * (maxLineWidth - minLineWidth);
+
+  const baseColor = 0;
+  const maxColor = deviceMode === 'ipad' ? 160 : 120;
+
+  const val = Math.round(baseColor + shadeOffset * (maxColor - baseColor));
+  ctx.strokeStyle = `rgba(${val},${val},${val},${1.1 / totalShades})`;
+
+
+
+  ctx.beginPath();
+  ctx.moveTo(offset, -lineLen);
+  ctx.lineTo(offset, lineLen);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+
+  });
+
+  ctx.restore();
+
+  /* Axis dots */
+  [0, 180].forEach(a => {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate((a + angle + 90) * Math.PI / 180);
+
+    ctx.beginPath();
+    ctx.arc(0, -dotOffset, 4, 0, Math.PI * 2);
+    ctx.fillStyle = 'darkred';
+    ctx.fill();
+
+    ctx.restore();
+  });
+
+  /* Center white circle */
+  ctx.beginPath();
+  ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+  ctx.fillStyle = 'white';
+  ctx.fill();
+}
+
+setupCanvas(canvas, ctx);
+drawFan();
+
+</script>
+
+
+
+
+<script>
+function toggleDiv(btn) {
+  // Find the next sibling with class "toggle-content"
+  const content = btn.nextElementSibling;
+  if (!content || !content.classList.contains("toggle-content")) return;
+
+  if (content.style.display === "none") {
+    content.style.display = "block";
+  } else {
+    content.style.display = "none";
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </body>
 </html>
