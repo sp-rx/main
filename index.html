@@ -6,51 +6,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f0f4f8;
-    --surface: #ffffff;
-    --surface-hover: #f7faff;
-    --border: rgba(60,100,180,0.13);
-    --border-hover: rgba(60,100,180,0.32);
-    --accent: #3b6fd4;
-    --accent-glow: rgba(59,111,212,0.07);
-    --teal: #0fa89e;
-    --text: #1a2236;
-    --text-muted: #6b7a99;
-  }
+ :root {
+  --surface: #fff;
+  --surface-hover: #faf5ed;
+
+  --border: rgba(120, 85, 50, 0.13);
+  --border-hover: rgba(120, 85, 50, 0.32);
+
+  --accent: #9a6b3f;
+  --accent-glow: rgba(154, 107, 63, 0.07);
+
+  --teal: #8b5e3c;
+
+  --text: #2d241d;
+  --text-muted: #806f5e;
+}
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background:
+    linear-gradient(rgba(244, 235, 220, 0.2), rgba(244, 235, 220, 0.8)),
+    url("https://sp-rx.github.io/main/main/BG.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 
-  body::before {
-    content: '';
-    position: fixed;
-    top: -20%;
-    left: -10%;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(ellipse, rgba(59,111,212,0.07) 0%, transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-  }
-  body::after {
-    content: '';
-    position: fixed;
-    bottom: -20%;
-    right: -10%;
-    width: 55%;
-    height: 55%;
-    background: radial-gradient(ellipse, rgba(15,168,158,0.06) 0%, transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-  }
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+
 
   .container {
     position: relative;
@@ -211,6 +200,8 @@ a.card:nth-child(14) { animation-delay: 0.60s; }
 
 .card-img-wrap img {
     font-size: 7px;
+    filter: saturate(50%);
+
 }
   
   a.card:hover .card-arrow {
@@ -236,6 +227,50 @@ a.card:nth-child(14) { animation-delay: 0.60s; }
     animation: fadeUp 0.5s 0.7s ease forwards;
     letter-spacing: 0.05em;
   }
+
+
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.75);
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+}
+
+.lightbox.active {
+  display: flex;
+}
+
+.lightbox img {
+  max-width: 95%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+  line-height: 1;
+}
+
+
+
+
+
+
+
+
+
 </style>
 </head>
 <body>
@@ -334,9 +369,39 @@ function toggleSelector() {
 
     <a class="card" href="https://sp-rx.github.io/alcon_order/" target="_blank">
       <div class="card-img-wrap"><img src="https://sp-rx.github.io/main/main/alcon_order.png" alt="alcon_order"></div>
-      <span class="card-label">alcon order</span>
+      <span class="card-label">Alcon Order</span>
       <span class="card-arrow">↗</span>
     </a>
+
+<a class="card" href="javascript:void(0);" onclick="openProductServiceLightbox()">
+  <div class="card-img-wrap">
+    <img src="https://sp-rx.github.io/main/main/product_service.jpg" alt="product_service">
+  </div>
+  <span class="card-label">Service & Product</span>
+  <span class="card-arrow">↗</span>
+</a>
+
+<div id="productServiceLightbox" class="lightbox" onclick="closeProductServiceLightbox()">
+  <span class="lightbox-close">&times;</span>
+
+  <img 
+    src="https://sp-rx.github.io/main/main/product_service.jpg"
+    alt="Product Service"
+    onclick="event.stopPropagation()"
+  >
+</div>
+
+<script>
+function openProductServiceLightbox() {
+  document.getElementById("productServiceLightbox").classList.add("active");
+}
+
+function closeProductServiceLightbox() {
+  document.getElementById("productServiceLightbox").classList.remove("active");
+}
+</script>
+
+
     
 <div style="display:none">
 
