@@ -278,21 +278,55 @@ a.card:nth-child(14) { animation-delay: 0.60s; }
 
   <div class="header">
     <p class="header-eyebrow">Clinical Tools Suite</p>
+
+<button
+  style="border:none; background:none; padding:0; width:50px; cursor:pointer;"
+  onclick="toggleCLSelector()">
+  <div class="header-line"></div>
+</button>
+
 <button
   style="border:none; background:none; padding:0; width:50px; cursor:pointer;"
   onclick="toggleSelector()">
   <div class="header-line"></div>
 </button>
 
+
     <h1>Kiara <em>Optometry</em> Tools</h1>
   </div>
 
   <div class="button-grid">
-    <a class="card" href="https://sp-rx.github.io/CL-SELECTOR/" target="_blank">
-      <div class="card-img-wrap"><img src="https://sp-rx.github.io/main/main/1.jpg" alt="Contact Lens Selector"></div>
-      <span class="card-label">Contact Lens Selector</span>
-      <span class="card-arrow">↗</span>
-    </a>
+
+
+   <a id="cl_selector" class="card" href="https://sp-rx.github.io/CL-SELECTOR/" target="_blank">
+  <div class="card-img-wrap">
+ <img src="https://sp-rx.github.io/main/main/1.jpg" alt="Contact Lens Selector"></div>
+  <span class="card-label">CL Selector</span>
+  <span class="card-arrow">↗</span>
+</a>
+
+    <a id="contact_lenses" class="card" href="https://sp-rx.github.io/contact_lenses/" target="_blank" style="display:none">
+  <div class="card-img-wrap">
+ <img src="https://sp-rx.github.io/main/main/1.jpg" alt="Contact Lens List"></div>
+  <span class="card-label">Contact Lenses List</span>
+  <span class="card-arrow">↗</span>
+</a>
+
+   <script>
+function toggleCLSelector() {
+  const s3 = document.getElementById("contact_lenses");
+  const s4 = document.getElementById("cl_selector");
+
+  if (s3.style.display === "none") {
+    s3.style.display = "";
+    s4.style.display = "none";
+  } else {
+    s3.style.display = "none";
+    s4.style.display = "";
+  }
+}
+</script>
+   
     <a class="card" href="https://sp-rx.github.io/ret_helper/" target="_blank">
       <div class="card-img-wrap"><img src="https://sp-rx.github.io/main/main/2.jpg" alt="Retinoscopy Helper"></div>
       <span class="card-label">Retinoscopy Helper</span>
@@ -329,11 +363,13 @@ function toggleSelector() {
   }
 }
 </script>
+   
     <a class="card" href="https://sp-rx.github.io/CL_MF/" target="_blank">
       <div class="card-img-wrap"><img src="https://sp-rx.github.io/main/main/CL_MF.png" alt="CL_MF"></div>
       <span class="card-label">Acuvue MF Contact Lens</span>
       <span class="card-arrow">↗</span>
     </a>
+
     <a class="card" href="https://sp-rx.github.io/super_rx_2/" target="_blank">
       <div class="card-img-wrap"><img src="https://sp-rx.github.io/main/main/4.jpg" alt="SP-RX Eye Exam"></div>
       <span class="card-label">SP-RX Eye Exam</span>
